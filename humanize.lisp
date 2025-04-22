@@ -142,15 +142,18 @@
       (parse-error (condition) (progn condition nil)))
     res))
 
-(defun doline (line field lnum)
-  (let ((fields (find-fields line)))
-    (if (> field (length fields))
-        (progn (format *error-output* "humanize: not enough fields on line ~a.~%" lnum) line)
-        (let* ((val (get-nth-field line fields field))
-               (num (parseint val)))
-          (if num
-              (replace-nth-field line fields field (add-unit num))
-              (progn (format *error-output* "humanize: field ~a not numeric on line ~a.~%" val lnum) line))))))
+(defun doline (line fnums lnum)
+  (block func
+    (multiple-value-bind (fields nfields)
+      (split-fields line)
+    (dolist (n fnums)
+      (if (> n nfields)
+          (progn (format *error-output* "humanize: not enough fields on line ~a.~%" lnum)
+                 (return-from func line)))
+      (if (not (parseint (get-field fields n)))
+          (progn (format *error-output* "humanize: field ~a (~a) not numeric on line ~a.~%" n (get-field fields n) lnum)
+                 (return-from func line))))
+      (join-fields (map-fields fields fnums (lambda (s) (add-unit (parseint s))))))))
 
 (defun doit (field)
   (let ((lnum 1))
