@@ -85,6 +85,11 @@
           (setq res (append res (list (list (car field) (funcall func (cadr field))))))
           (setq res (append res (list field)))))))
 
+(defun get-field (fields n)
+  (dolist (field fields)
+    (if (eq n (car field))
+        (return (cadr field)))))
+
 (defun find-fields (str)
   (let ((res '())
         (chr '())
@@ -129,11 +134,6 @@
              (end (cadr lst)))
         (format nil "~a~a~a" start rstr end))))
 
-(defun get-field (lst num)
-  (if (> num (length lst))
-      nil
-      (nth (- num 1) lst)))
-
 (defun errout () (progn (format *error-output* "humanize: Invalid argument.~%") (exit :code 1)))
 
 (defun parseint (str)
@@ -145,7 +145,7 @@
 (defun doline (line fnums lnum)
   (block func
     (multiple-value-bind (fields nfields)
-      (split-fields line)
+        (split-fields line)
     (dolist (n fnums)
       (if (> n nfields)
           (progn (format *error-output* "humanize: not enough fields on line ~a.~%" lnum)
