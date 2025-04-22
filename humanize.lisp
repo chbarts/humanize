@@ -90,50 +90,6 @@
     (if (eq n (car field))
         (return (cadr field)))))
 
-(defun find-fields (str)
-  (let ((res '())
-        (chr '())
-        (tmp '()))
-    (dotimes (i (length str) (if tmp (append res (list (append tmp (list (length str))))) res))
-      (setq chr (char str i))
-      (if (spacep chr)
-          (if tmp (progn (setq res (append res (list (append tmp (list i)))))
-                         (setq tmp '())))
-          (if (not tmp) (setq tmp (list i)))))))
-
-(defun flatten-fields (fields)
-  (let ((res '()))
-    (dolist (field fields res)
-      (setq res (append res field)))))
-
-(defun split-into-fields (str fields)
-  (do* ((ffields (flatten-fields fields) (cdr ffields))
-        (start (car ffields) (car ffields))
-        (end (cadr ffields) (cadr ffields))
-        (res (list (subseq str start end)) (append res (list (subseq str start end)))))
-       ((< (length ffields) 2) res)))
-
-(defun get-nth-field (str fields num)
-  (if (> num (length fields))
-      nil
-      (subseq str (car (nth (- num 1) fields)) (cadr (nth (- num 1) fields)))))
-
-(defun remove-nth-field (str fields num)
-  (if (> num (length fields))
-      nil
-      (let* ((field (nth (- num 1) fields))
-             (start (car field))
-             (end (cadr field)))
-        (list (subseq str 0 start) (subseq str end)))))
-
-(defun replace-nth-field (sstr fields num rstr)
-  (if (> num (length fields))
-      nil
-      (let* ((lst (remove-nth-field sstr fields num))
-             (start (car lst))
-             (end (cadr lst)))
-        (format nil "~a~a~a" start rstr end))))
-
 (defun errout () (progn (format *error-output* "humanize: Invalid argument.~%") (exit :code 1)))
 
 (defun parseint (str)
