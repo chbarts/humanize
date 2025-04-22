@@ -38,17 +38,6 @@
 (defun spacep (chr)
   (not (not (position chr *unicode-whitespace*))))
 
-(defun split-spaces (str)
-  (let ((res '())
-        (chr '())
-        (sstr ""))
-    (dotimes (i (length str) (append res (list sstr)))
-      (setq chr (char str i))
-      (if (spacep chr)
-          (if (> (length sstr) 0) (progn (setq res (append res (list sstr)))
-                                         (setq sstr "")))
-          (setq sstr (format nil "~a~a" sstr chr))))))
-
 (defun split-fields (str)
   (let ((res '())
         (chr '())
