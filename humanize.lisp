@@ -54,7 +54,7 @@
         (chr '())
         (sstr "")
         (pstr "")
-        (n 0))
+        (n 1))
     (dotimes (i (length str) (append res (if (> (length pstr) 0) (list (list n pstr)) (if (> (length sstr) 0) (list (list 'X sstr)) '()))))
       (setq chr (char str i))
       (if (spacep chr)
